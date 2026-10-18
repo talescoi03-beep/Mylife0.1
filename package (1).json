@@ -1,0 +1,28 @@
+{
+  "name": "my-life-frontend",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "description": "My Life — personal life-management PWA (React + TypeScript, built with esbuild).",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "dev": "node scripts/build.mjs --serve",
+    "build": "node scripts/build.mjs",
+    "test": "node --import tsx --test tests/logic.test.ts tests/sync.test.ts",
+    "typecheck": "tsc --noEmit -p tsconfig.json"
+  },
+  "dependencies": {
+    "react": "19.2.8",
+    "react-dom": "19.2.8",
+    "uuid": "14.0.2"
+  },
+  "devDependencies": {
+    "esbuild": "0.28.2",
+    "tsx": "4.23.12",
+    "typescript": "6.0.3",
+    "@types/react": "^19.2.0",
+    "@types/react-dom": "^19.2.0"
+  }
+}

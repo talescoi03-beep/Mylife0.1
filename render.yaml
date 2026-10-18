@@ -1,0 +1,68 @@
+# Render Blueprint for My Life.
+# In Render: New → Blueprint → choose this repository. Render creates both
+# services and asks for the values marked `sync: false`.
+#
+# Your data does NOT live on Render. It lives in Supabase, so restarts,
+# redeploys and the free plan's sleeping never touch it.
+services:
+  # The app itself: a static site (free).
+  - type: web
+    name: my-life
+    runtime: static
+    rootDir: frontend
+    buildCommand: npm install && npm run build
+    staticPublishPath: ./dist
+    envVars:
+      - key: PUBLIC_SUPABASE_URL        # https://<project-ref>.supabase.co
+        sync: false
+      - key: PUBLIC_SUPABASE_KEY        # Supabase PUBLISHABLE key (sb_publishable_…). Never the secret key.
+        sync: false
+      - key: PUBLIC_API_URL             # URL of the my-life-api service below, e.g. https://my-life-api.onrender.com
+        sync: false
+    routes:
+      # Single-page app: unknown paths load the app (existing files are served as-is).
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    headers:
+      - path: /sw.js
+        name: Cache-Control
+        value: no-cache
+      - path: /index.html
+        name: Cache-Control
+        value: no-cache
+      - path: /assets/*
+        name: Cache-Control
+        value: public, max-age=31536000, immutable
+      - path: /*
+        name: X-Content-Type-Options
+        value: nosniff
+      - path: /*
+        name: Referrer-Policy
+        value: strict-origin-when-cross-origin
+      - path: /*
+        name: X-Frame-Options
+        value: DENY
+      - path: /*
+        name: Permissions-Policy
+        value: camera=(), microphone=(), geolocation=()
+
+  # Small helper API (free plan; sleeps after 15 idle minutes). Only used for
+  # deleting your account, which needs the Supabase secret key.
+  - type: web
+    name: my-life-api
+    runtime: node
+    plan: free
+    rootDir: backend
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /health
+    envVars:
+      - key: SUPABASE_URL               # https://<project-ref>.supabase.co
+        sync: false
+      - key: SUPABASE_PUBLISHABLE_KEY   # sb_publishable_…
+        sync: false
+      - key: SUPABASE_SECRET_KEY        # sb_secret_… — server only, never in the frontend
+        sync: false
+      - key: ALLOWED_ORIGINS            # your static site URL, e.g. https://my-life.onrender.com
+        sync: false

@@ -1,0 +1,13 @@
+{
+  "name": "my-life-api",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Stateless helper API for My Life (account deletion). No dependencies.",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "start": "node server.mjs"
+  }
+}
